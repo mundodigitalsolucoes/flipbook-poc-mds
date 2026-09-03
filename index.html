@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#2f3453" />
-    <title>Flipbook POC | Bora Vender+</title>
+    <title>Flipbook POC | MDS</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
@@ -12,9 +12,11 @@
       <header class="topbar">
         <div>
           <span class="eyebrow">POC MDS</span>
-          <h1>Guia Bora Vender+ <small>Setembro 2026</small></h1>
+          <h1>Flipbook responsivo <small>PDF.js + StPageFlip</small></h1>
         </div>
         <div class="actions">
+          <label class="upload-button" for="pdfInput">Abrir PDF</label>
+          <input id="pdfInput" type="file" accept="application/pdf" hidden />
           <button id="zoomOut" type="button" aria-label="Diminuir zoom">−</button>
           <span id="zoomLabel">100%</span>
           <button id="zoomIn" type="button" aria-label="Aumentar zoom">+</button>
@@ -23,13 +25,19 @@
       </header>
 
       <section class="viewer-wrap" id="viewerWrap">
-        <div id="status" class="status">Carregando edição…</div>
-        <div id="book" aria-label="Flipbook do Guia Bora Vender+"></div>
+        <div id="status" class="status">
+          <div class="empty-state">
+            <strong>Selecione o PDF para iniciar</strong>
+            <span>Para o teste, use o Guia Bora Vender+ de Setembro 2026.</span>
+            <label class="upload-button upload-primary" for="pdfInput">Escolher PDF</label>
+          </div>
+        </div>
+        <div id="book" aria-label="Leitor flipbook"></div>
       </section>
 
       <nav class="controls" aria-label="Navegação da revista">
         <button id="prev" type="button">← Anterior</button>
-        <div class="page-info"><span id="pageCurrent">1</span> / <span id="pageTotal">23</span></div>
+        <div class="page-info"><span id="pageCurrent">0</span> / <span id="pageTotal">0</span></div>
         <button id="next" type="button">Próxima →</button>
       </nav>
       <p class="hint">Desktop: páginas duplas • Mobile: página única • Arraste ou use os botões para folhear</p>

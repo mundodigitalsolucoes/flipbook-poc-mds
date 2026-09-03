@@ -1,27 +1,33 @@
 const pdfjsLib = window.pdfjsLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const PDF_URL = './public/guia-bora-vender-setembro-2026.pdf';
 const bookEl = document.querySelector('#book');
 const statusEl = document.querySelector('#status');
 const pageCurrent = document.querySelector('#pageCurrent');
 const pageTotal = document.querySelector('#pageTotal');
 const viewerWrap = document.querySelector('#viewerWrap');
 const zoomLabel = document.querySelector('#zoomLabel');
+const pdfInput = document.querySelector('#pdfInput');
 
 let pageFlip;
 let zoom = 1;
 let baseRatio = 1;
 
-function setStatus(text = '') {
-  statusEl.textContent = text;
-  statusEl.hidden = !text;
+function setStatus(content = '') {
+  if (!content) {
+    statusEl.hidden = true;
+    statusEl.innerHTML = '';
+    return;
+  }
+  statusEl.hidden = false;
+  statusEl.innerHTML = `<div class="empty-state"><strong>${content}</strong></div>`;
 }
 
-async function renderPdfPages() {
+async function renderPdfPages(source) {
   setStatus('Carregando PDF…');
-  const pdf = await pdfjsLib.getDocument(PDF_URL).promise;
-  pageTotal.textContent = pdf.numPages;
+  const pdf = await pdfjsLib.getDocument(source).promise;
+  pageTotal.textContent = String(pdf.numPages);
+  pageCurrent.textContent = pdf.numPages ? '1' : '0';
   const imageUrls = [];
 
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
@@ -43,7 +49,16 @@ async function renderPdfPages() {
   return imageUrls;
 }
 
+function destroyFlipbook() {
+  if (pageFlip) {
+    try { pageFlip.destroy(); } catch (error) { console.warn(error); }
+    pageFlip = undefined;
+  }
+  bookEl.innerHTML = '';
+}
+
 function createFlipbook(imageUrls) {
+  destroyFlipbook();
   const baseHeight = 720;
   const baseWidth = Math.round(baseHeight * baseRatio);
 
@@ -66,10 +81,29 @@ function createFlipbook(imageUrls) {
   });
 
   pageFlip.loadFromImages(imageUrls);
-  pageFlip.on('flip', (e) => {
-    pageCurrent.textContent = String(e.data + 1);
+  pageFlip.on('flip', (event) => {
+    pageCurrent.textContent = String(event.data + 1);
   });
   pageFlip.on('changeOrientation', () => requestAnimationFrame(applyZoom));
+  applyZoom();
+}
+
+async function openPdf(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf') {
+    setStatus('Selecione um arquivo PDF válido.');
+    return;
+  }
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const pages = await renderPdfPages({ data: new Uint8Array(buffer) });
+    createFlipbook(pages);
+    setStatus('');
+  } catch (error) {
+    console.error(error);
+    setStatus('Não foi possível carregar este PDF.');
+  }
 }
 
 function applyZoom() {
@@ -83,6 +117,7 @@ function setZoom(nextZoom) {
   applyZoom();
 }
 
+pdfInput.addEventListener('change', (event) => openPdf(event.target.files?.[0]));
 document.querySelector('#prev').addEventListener('click', () => pageFlip?.flipPrev());
 document.querySelector('#next').addEventListener('click', () => pageFlip?.flipNext());
 document.querySelector('#zoomOut').addEventListener('click', () => setZoom(zoom - 0.1));
@@ -97,14 +132,3 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight') pageFlip?.flipNext();
   if (event.key === 'Escape' && zoom !== 1) setZoom(1);
 });
-
-(async () => {
-  try {
-    const pages = await renderPdfPages();
-    createFlipbook(pages);
-    setStatus('');
-  } catch (error) {
-    console.error(error);
-    setStatus('Não foi possível carregar o flipbook.');
-  }
-})();

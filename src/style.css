@@ -13,15 +13,21 @@ button { font: inherit; }
 .eyebrow { display: block; font-size: 10px; letter-spacing: .2em; font-weight: 800; color: #e5c66c; }
 h1 { margin: 4px 0 0; font-size: clamp(18px, 2.6vw, 28px); }
 h1 small { font-size: .55em; font-weight: 500; opacity: .55; }
-.actions { display: flex; gap: 8px; align-items: center; }
-.actions button, .controls button { border: 1px solid rgba(255,255,255,.12); color: #fff; background: rgba(255,255,255,.07); border-radius: 999px; padding: 10px 14px; cursor: pointer; transition: .2s ease; }
-.actions button:hover, .controls button:hover { background: rgba(255,255,255,.13); transform: translateY(-1px); }
+.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.actions button, .controls button, .upload-button { border: 1px solid rgba(255,255,255,.12); color: #fff; background: rgba(255,255,255,.07); border-radius: 999px; padding: 10px 14px; cursor: pointer; transition: .2s ease; text-decoration: none; }
+.actions button:hover, .controls button:hover, .upload-button:hover { background: rgba(255,255,255,.13); transform: translateY(-1px); }
+.upload-button { display: inline-flex; align-items: center; justify-content: center; }
+.upload-primary { margin-top: 10px; background: #e5c66c; border-color: #e5c66c; color: #232744; font-weight: 800; }
+.upload-primary:hover { background: #efd887; }
 #zoomLabel { min-width: 46px; text-align: center; font-size: 12px; opacity: .75; }
 .viewer-wrap { min-height: 0; position: relative; overflow: auto; display: grid; place-items: center; padding: 8px; overscroll-behavior: contain; }
 .viewer-wrap:fullscreen { background: #171a2d; padding: 40px 10px; }
 #book { transform-origin: center center; transition: transform .18s ease; }
 .status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 20; color: rgba(255,255,255,.75); font-size: 14px; }
 .status[hidden] { display: none; }
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 28px; }
+.empty-state strong { color: #fff; font-size: clamp(18px, 3vw, 26px); }
+.empty-state span { color: rgba(255,255,255,.55); max-width: 520px; }
 .stf__parent { margin: 0 auto; }
 .stf__block { box-shadow: 0 28px 70px rgba(0,0,0,.38); }
 .controls { display: flex; align-items: center; justify-content: center; gap: 18px; }
@@ -29,10 +35,10 @@ h1 small { font-size: .55em; font-weight: 500; opacity: .55; }
 .hint { margin: -4px 0 0; text-align: center; font-size: 11px; color: rgba(255,255,255,.42); }
 @media (max-width: 700px) {
   .app-shell { padding: 10px 8px 12px; gap: 8px; }
-  .topbar { align-items: flex-start; }
+  .topbar { align-items: flex-start; gap: 8px; }
   h1 small { display: none; }
   .actions { gap: 4px; }
-  .actions button { padding: 8px 10px; font-size: 12px; }
+  .actions button, .actions .upload-button { padding: 8px 10px; font-size: 12px; }
   #fullscreen { display: none; }
   .viewer-wrap { padding: 0; }
   .controls { gap: 8px; }
